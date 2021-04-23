@@ -37,14 +37,23 @@ fun printSeats(seats: Array<Array<String>>) {
     println()
 }
 
-fun buyTicket(): Pair<Int, Int> {
-    println("Enter a row number:")
-    val row = sc.nextInt()
+fun selectSeat(seats: Array<Array<String>>): Pair<Int, Int> {
+    while (true) {
+        println("Enter a row number:")
+        val row = sc.nextInt()
+        println("Enter a seat number in that row:")
+        val col = sc.nextInt()
+        println()
 
-    println("Enter a seat number in that row:")
-    val col = sc.nextInt()
-
-    return Pair(row, col)
+        try {
+            if (seats[row][col] != "B") return Pair(row, col)
+            else println("That ticket has already been purchased")
+            println()
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            println("Wrong input!")
+            println()
+        }
+    }
 }
 
 fun ticketPrice(seats: Array<Array<String>>, seatRow: Int): Int {
@@ -60,9 +69,18 @@ fun ticketPrice(seats: Array<Array<String>>, seatRow: Int): Int {
     }
 }
 
+fun statistic(purchasedTickets: Int, percentageTickets: Double, income: Int, totalIncome: Int) {
+    println("Number of purchased tickets: $purchasedTickets")
+    println("Percentage: ${"%.2f".format(percentageTickets)}%")
+    println("Current income: $$income")
+    println("Total income: $$totalIncome")
+    println()
+}
+
 fun displayMenu(): Int {
     println("1. Show the seats")
     println("2. Buy a ticket")
+    println("3. Statistics")
     println("0. Exit")
 
     val choice = sc.nextInt()
@@ -79,20 +97,34 @@ fun main() {
     val cols = sc.nextInt()
     println()
 
-    var seats = Array<Array<String>>(rows + 1){Array<String>(cols + 1){"$it"} }
+    var seats = Array(rows + 1){Array(cols + 1){"$it"} }
     seats = fixInput(seats)
 
+    var purchasedTickets = 0
+    var income = 0
     while (true) {
         val choice = displayMenu()
         if (choice == 1) {
             printSeats(seats)
         } else if (choice == 2) {
-            // Buy a ticket
-            val (seatRow, seatCol) = buyTicket()
+            // Select a seat
+            val (seatRow, seatCol) = selectSeat(seats)
             seats[seatRow][seatCol] = "B"
 
-            val tickerPrice = ticketPrice(seats, seatRow)
-            println("Ticket price: $$tickerPrice\n")
+            // Purchased ticket
+            val ticketPrice = ticketPrice(seats, seatRow)
+            purchasedTickets++
+            income += ticketPrice
+            println("Ticket price: $$ticketPrice")
+            println()
+        } else if (choice == 3) {
+            val totalSeats = rows * cols
+            val percentageTickets: Double = purchasedTickets.toDouble() * 100 / totalSeats
+            val totalIncome =
+                if (totalSeats < 60) totalSeats * 10
+                else rows / 2 * cols * 10 + (totalSeats - rows / 2 * cols) * 8
+
+            statistic(purchasedTickets, percentageTickets, income, totalIncome)
         } else {
             break
         }
