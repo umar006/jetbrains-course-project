@@ -40,11 +40,9 @@ fun printSeats(seats: Array<Array<String>>) {
 fun buyTicket(): Pair<Int, Int> {
     println("Enter a row number:")
     val row = sc.nextInt()
-    println("> $row")
 
     println("Enter a seat number in that row:")
     val col = sc.nextInt()
-    println("> $col\n")
 
     return Pair(row, col)
 }
@@ -62,24 +60,41 @@ fun ticketPrice(seats: Array<Array<String>>, seatRow: Int): Int {
     }
 }
 
+fun displayMenu(): Int {
+    println("1. Show the seats")
+    println("2. Buy a ticket")
+    println("0. Exit")
+
+    val choice = sc.nextInt()
+    println()
+
+    return choice
+}
+
 fun main() {
     println("Enter the number of rows:")
     val rows = sc.nextInt()
-    println("> $rows")
 
     println("Enter the number of seats in each row:")
     val cols = sc.nextInt()
-    println("> $cols\n")
+    println()
 
-    // Print initial seats
     var seats = Array<Array<String>>(rows + 1){Array<String>(cols + 1){"$it"} }
     seats = fixInput(seats)
-    printSeats(seats)
 
-    // Buy a ticket
-    val (seatRow, seatCol) = buyTicket()
-    seats[seatRow][seatCol] = "B"
-    val tickerPrice = ticketPrice(seats, seatRow)
-    println("Ticket price: $$tickerPrice\n")
-    printSeats(seats)
+    while (true) {
+        val choice = displayMenu()
+        if (choice == 1) {
+            printSeats(seats)
+        } else if (choice == 2) {
+            // Buy a ticket
+            val (seatRow, seatCol) = buyTicket()
+            seats[seatRow][seatCol] = "B"
+
+            val tickerPrice = ticketPrice(seats, seatRow)
+            println("Ticket price: $$tickerPrice\n")
+        } else {
+            break
+        }
+    }
 }
