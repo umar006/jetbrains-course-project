@@ -1,11 +1,20 @@
 package machine
+import java.util.Scanner
+
+val sc = Scanner(System.`in`)
+
+fun ingredientCalculator(cups: Int) {
+    val ingredients = listOf<Int>(200, 50, 15)
+    val (water, milk, coffeeBeans) = ingredients.map{it * cups}
+
+    println("For $cups of coffee you will need:")
+    println("$water ml of water")
+    println("$milk ml of milk")
+    println("$coffeeBeans g of coffee beans")
+}
 
 fun main() {
-    println("Starting to make a coffee")
-    println("Grinding coffee beans")
-    println("Boiling water")
-    println("Mixing boiled water with crushed coffee beans")
-    println("Pouring coffee into the cup")
-    println("Pouring some milk into the cup")
-    println("Coffee is ready!")
+    print("Write how many cups of coffee you will need: ")
+    val cups = sc.nextInt()
+    ingredientCalculator(cups)
 }

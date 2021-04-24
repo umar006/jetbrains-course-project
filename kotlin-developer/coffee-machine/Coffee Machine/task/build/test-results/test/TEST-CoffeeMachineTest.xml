@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="CoffeeMachineTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-04-24T03:59:40" hostname="reborn" time="0.105">
+<testsuite name="CoffeeMachineTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-04-24T04:11:47" hostname="reborn" time="0.21">
   <properties/>
-  <testcase name="start" classname="CoffeeMachineTest" time="0.105"/>
+  <testcase name="start" classname="CoffeeMachineTest" time="0.21"/>
   <system-out><![CDATA[?[1;31m
 Start test 1?[0m
-Starting to make a coffee
-Grinding coffee beans
-Boiling water
-Mixing boiled water with crushed coffee beans
-Pouring coffee into the cup
-Pouring some milk into the cup
-Coffee is ready!
+Write how many cups of coffee you will need: > 25
+5000 ml of water
+1250 ml of milk
+375 g of coffee beans
+?[1;31m
+Start test 2?[0m
+Write how many cups of coffee you will need: > 125
+25000 ml of water
+6250 ml of milk
+1875 g of coffee beans
+?[1;31m
+Start test 3?[0m
+Write how many cups of coffee you will need: > 1
+200 ml of water
+50 ml of milk
+15 g of coffee beans
+?[1;31m
+Start test 4?[0m
+Write how many cups of coffee you will need: > 123
+24600 ml of water
+6150 ml of milk
+1845 g of coffee beans
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

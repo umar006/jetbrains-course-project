@@ -1,9 +1,24 @@
 [1;31m
 Start test 1[0m
-Starting to make a coffee
-Grinding coffee beans
-Boiling water
-.Mixing boiled water with crushed coffee beans
-Pouring coffee into the cup
-Pouring some milk into the cup
-Coffee is ready!
+2Write how many cups of coffee you will need: > 25
+5000 ml of water
+1250 ml of milk
+375 g of coffee beans
+[1;31m
+Start test 2[0m
+3Write how many cups of coffee you will need: > 125
+25000 ml of water
+6250 ml of milk
+1875 g of coffee beans
+[1;31m
+Start test 3[0m
+1Write how many cups of coffee you will need: > 1
+200 ml of water
+50 ml of milk
+15 g of coffee beans
+[1;31m
+Start test 4[0m
+3Write how many cups of coffee you will need: > 123
+24600 ml of water
+6150 ml of milk
+1845 g of coffee beans
