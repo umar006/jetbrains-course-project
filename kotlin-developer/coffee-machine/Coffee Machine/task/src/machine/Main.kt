@@ -3,9 +3,8 @@ import java.util.Scanner
 
 val sc = Scanner(System.`in`)
 
-fun ingredientCalculator(cups: Int, ingredientsStock: IntArray) {
-    val (waterStock, milkStock, coffeeBeansStock) = ingredientsStock
-    val (water, milk, coffeeBeans) = intArrayOf(200, 50, 15)
+fun stockCalculator(cups: Int, stock: IntArray) {
+
 
 //    val cupsStock = intArrayOf(waterAmount / water, milkAmount / milk, coffeeBeansAmount / coffeeBeans).minOf{it}
 //
@@ -39,32 +38,40 @@ fun addStock(initialStock: IntArray): IntArray {
 
 fun displayStock(stock: IntArray) {
     println("""
-
         The coffee machine has:
         ${stock[0]} of water
         ${stock[1]} of milk
         ${stock[2]} of coffee beans
         ${stock[3]} of disposable cups
-        ${stock[4]} of money
+        $${stock[4]} of money
     """.trimIndent())
 }
 
-fun makeCoffee(coffee: Int, initialStock: IntArray): IntArray {
+fun makeCoffee(coffee: Int, initialStock: IntArray): Pair<IntArray, Unit> {
     val (needWater, needMilk, needCoffeeBeans, needCups, needMoney) =
         when (coffee) {
             1 -> intArrayOf(250, 0, 16, 1, 4)
             2 -> intArrayOf(350, 75, 20, 1, 7)
             else -> intArrayOf(200, 100, 12, 1, 6)
         }
-    val (initWater, initMilk, initCofeeBeans, initCups, initMoney) = initialStock
+    val (initWater, initMilk, initCoffeeBeans, initCups, initMoney) = initialStock
 
-    return intArrayOf(
-        initWater - needWater,
-        initMilk - needMilk,
-        initCofeeBeans - needCoffeeBeans,
-        initCups - needCups,
-        initMoney + needMoney
-    )
+    val water = initWater - needWater
+    val milk = initMilk - needMilk
+    val coffeeBeans = initCoffeeBeans - needCoffeeBeans
+
+    return when {
+        water < 0 -> Pair(initialStock, println("Sorry, not enough water!"))
+        milk < 0 -> Pair(initialStock, println("Sorry, not enough milk"))
+        coffeeBeans < 0 -> Pair(initialStock, println("Sorry, not enough coffee beans"))
+        else -> Pair(intArrayOf(
+            initWater - needWater,
+            initMilk - needMilk,
+            initCoffeeBeans - needCoffeeBeans,
+            initCups - needCups,
+            initMoney + needMoney
+        ), println("I have enough resource, making you a coffee"))
+    }
 }
 
 fun takeMoney(initialStock: IntArray): Pair<IntArray, Int> {
@@ -76,23 +83,32 @@ fun takeMoney(initialStock: IntArray): Pair<IntArray, Int> {
 
 fun main() {
     // input is IntArray - water, milk, coffee beans, cups, and money
-    val initialStock = intArrayOf(400, 540, 120, 9, 550)
-    displayStock(initialStock)
+    var currentStock = intArrayOf(400, 540, 120, 9, 550)
 
-    print("\nWrite action (buy, fill, take): ")
-    val action = sc.next()
-    if (action == "buy") {
-        print("What do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino: ")
-        val coffee = sc.nextInt()
-        val currentStock = makeCoffee(coffee, initialStock)
-        displayStock(currentStock)
-    } else if (action == "fill") {
-        val currentStock = addStock(initialStock)
-        displayStock(currentStock)
-    } else if (action == "take") {
-        val (currentStock, money) = takeMoney(initialStock)
-        println("I gave you $$money")
-        displayStock(currentStock)
+    while (true) {
+        print("\nWrite action (buy, fill, take, remaining, exit): ")
+        val action = sc.next()
+        if (action == "buy") {
+            print("What do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: ")
+            val coffee = sc.next()
+            if (coffee == "back")
+                continue
+            else {
+                val coffeeToInt = coffee.toInt()
+                val (sameStock, status) = makeCoffee(coffeeToInt, currentStock)
+                currentStock = sameStock
+            }
+        } else if (action == "fill") {
+            currentStock = addStock(currentStock)
+        } else if (action == "take") {
+            val (currentMoney, money) = takeMoney(currentStock)
+            println("I gave you $$money")
+            currentStock = currentMoney
+        } else if (action == "remaining") {
+            displayStock(currentStock)
+        } else {
+            break
+        }
     }
 //    val ingredientsStock = ingredientsStock()
 
