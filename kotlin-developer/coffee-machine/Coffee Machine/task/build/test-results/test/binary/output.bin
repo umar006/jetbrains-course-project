@@ -11,11 +11,11 @@
 
 7Write action (buy, fill, take, remaining, exit): > buy
 ZWhat do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: > 2
-,I have enough resource, making you a coffee
+-I have enough resource, making you a coffee!
 
 7Write action (buy, fill, take, remaining, exit): > buy
 ZWhat do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: > 2
-Sorry, not enough water!
+Sorry, not enough water
 
 8Write action (buy, fill, take, remaining, exit): > fill
 6Write how many ml of water do you want to add: > 1000
@@ -25,7 +25,7 @@
 
 7Write action (buy, fill, take, remaining, exit): > buy
 ZWhat do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: > 2
-,I have enough resource, making you a coffee
+-I have enough resource, making you a coffee!
 
 8Write action (buy, fill, take, remaining, exit): > take
 I gave you $564
@@ -78,7 +78,7 @@
 
 7Write action (buy, fill, take, remaining, exit): > buy
 ZWhat do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: > 1
-,I have enough resource, making you a coffee
+-I have enough resource, making you a coffee!
 
 =Write action (buy, fill, take, remaining, exit): > remaining
 The coffee machine has:
@@ -102,7 +102,7 @@
 
 7Write action (buy, fill, take, remaining, exit): > buy
 ZWhat do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: > 2
-,I have enough resource, making you a coffee
+-I have enough resource, making you a coffee!
 
 =Write action (buy, fill, take, remaining, exit): > remaining
 The coffee machine has:
@@ -126,7 +126,7 @@
 
 7Write action (buy, fill, take, remaining, exit): > buy
 ZWhat do you want to buy? 1 - espresso, 2- latte, 3 - cappuccino, back - to main menu: > 3
-,I have enough resource, making you a coffee
+-I have enough resource, making you a coffee!
 
 =Write action (buy, fill, take, remaining, exit): > remaining
 The coffee machine has:
