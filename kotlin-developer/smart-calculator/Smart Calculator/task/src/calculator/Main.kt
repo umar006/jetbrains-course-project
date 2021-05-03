@@ -1,7 +1,18 @@
 package calculator
 
 fun main() {
-    val (input1, input2) = readLine()!!.split(" ").map { it.toInt() }
+    while (true) {
+        val value = readLine()!!
 
-    println(input1 + input2)
+        if (value == "/exit") break
+        if (value == "") continue
+
+        try {
+            val (input1, input2) = value.split(" ").map { it.toInt() }
+            println(input1 + input2)
+        } catch (e: IndexOutOfBoundsException) {
+            println("$value")
+        }
+    }
+    println("Bye!")
 }
