@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/271268/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: Mon, 03 May 2021 05:29:43 UTC
+update_date: Wed, 05 May 2021 04:52:45 UTC
 stages:
 - id: 486
   step: 7809
@@ -19,10 +19,10 @@ stages:
   is_completed: true
 - id: 490
   step: 7813
-  is_completed: false
+  is_completed: true
 - id: 491
   step: 7814
-  is_completed: false
+  is_completed: true
 - id: 492
   step: 7815
   is_completed: false
@@ -102,6 +102,8 @@ topics:
     theory_id: 11477
   - title: If expression
     theory_id: 4625
+  - title: When expression
+    theory_id: 4631
   - title: Repeating blocks
     theory_id: 4643
   - title: For loop and ranges
