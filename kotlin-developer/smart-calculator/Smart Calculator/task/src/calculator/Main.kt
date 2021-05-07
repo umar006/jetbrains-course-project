@@ -19,8 +19,8 @@ fun main() {
             val variable = formattedValue.split("=")
 
             val invalAssign = "(?<==)([a-zA-Z]+\\d|\\d+[a-zA-Z])|=[a-zA-Z]\\d=|=\\d[a-zA-Z]=".toRegex()
-            val invalIdent = "^[a-zA-Z]+\\d|^\\d+|[^\\w=]".toRegex()
-            val unknownVar = "(?<=\\=)[a-zA-Z]+".toRegex()
+            val invalIdent = "^[a-zA-Z]+\\d|^\\d+|=[\\x00-\\x7F]*=".toRegex()
+            val unknownVar = "(?<==)[a-zA-Z]+".toRegex()
 
             when {
                 formattedValue.contains(invalAssign) -> println("Invalid assignment")
@@ -38,47 +38,123 @@ fun main() {
             continue
         }
 
-        if (value in store.keys) {
-            println(store[value])
+        if (value.trim() in store.keys) {
+            println(store[value.trim()])
             continue
         }
-        if (store[value] == null && !value.contains("[+-]".toRegex())) {
+        if (store[value.trim()] == null && !value.contains("[-+*/()]".toRegex())) {
             println("Unknown variable")
+            continue
+        }
+        if ("**" in value || "//" in value) {
+            println("Invalid expression")
             continue
         }
 
         var input = value.replace("\\s+".toRegex(), " ")
-        while ("++" in input || "--" in input || "+-" in input || "-+" in input) {
+        while ("++" in input || "--" in input || "+-" in input || "-+" in input
+            || "**" in input || "//" in input) {
             input = input.replace("++", "+")
             input = input.replace("--", "+")
             input = input.replace("+-", "-")
             input = input.replace("-+", "-")
         }
 
-        val formattedInput = input.split(" ")
+        if ("(" in input) input = input.replace("(", "( ")
+        if (")" in input) input = input.replace(")", " )")
+
+        val infix = input.split(" ")
         val operators: ArrayList<String> = ArrayList()
         val numbers: ArrayList<Int> = ArrayList()
 
-        for (finput in formattedInput) {
+        val isDigit = "[\\d]".toRegex()
+        val isLetter = "[a-zA-Z]".toRegex()
+        val isOperator = "[-+*/]".toRegex()
+        val highPrecedence = "[*/]".toRegex()
+        val lowPrecedence = "[-+]".toRegex()
+
+        val postfix = mutableListOf<String>()
+        val operatorStack = mutableListOf<String>()
+        for (finput in infix) {
             when {
                 finput.last().isDigit() -> numbers.add(finput.toInt())
                 finput.last().isLetter() -> numbers.add(store[finput]!!)
                 else -> operators.add(finput)
             }
-        }
 
-        if (numbers.size == 0) { println("Invalid expression"); continue }
-        if (numbers.size == operators.size) { println("Invalid expression"); continue }
-        if (numbers.size > 1 && operators.size == 0) { println("Invalid expression"); continue }
+            if (finput.contains(isDigit) || finput.contains(isLetter)) {
+                postfix.add(finput)
+                continue
+            }
 
-        var result = numbers[0]
-        for (ix in operators.indices) {
-            when (operators[ix]) {
-                "+" -> result += numbers[ix + 1]
-                "-" -> result -= numbers[ix + 1]
+            if ((operatorStack.isEmpty() || operatorStack.last() == "(")
+                && finput.contains(isOperator)) {
+                    operatorStack.add(finput)
+                    continue
+            }
+
+            if (operatorStack.isNotEmpty() && operatorStack.last().contains(lowPrecedence)
+                && finput.contains(highPrecedence)) {
+                    operatorStack.add(finput)
+                    continue
+            }
+
+            if (operatorStack.isNotEmpty()
+                && ((operatorStack.last().contains(lowPrecedence) && finput.contains(lowPrecedence))
+                        || (operatorStack.last().contains(highPrecedence) && finput.contains(highPrecedence))
+                        || operatorStack.last().contains(highPrecedence) && finput.contains(lowPrecedence))
+            ) {
+                postfix.add(operatorStack.removeLast())
+                while (operatorStack.isNotEmpty() && (operatorStack.last() != "("
+                    || (operatorStack.last().contains(highPrecedence) && finput.contains(highPrecedence))
+                    || (operatorStack.last().contains(lowPrecedence) && finput.contains(lowPrecedence)))
+                ) postfix.add(operatorStack.removeLast())
+                operatorStack.add(finput)
+                continue
+            }
+
+            if (finput == "(") {
+                operatorStack.add(finput)
+                continue
+            }
+
+            if (finput == ")") {
+                if (!operatorStack.contains("(")) { println("Invalid expression"); break }
+                while (operatorStack.last() != "(") {
+                    postfix.add(operatorStack.removeLast())
+                }
+                operatorStack.removeLast()
+                continue
             }
         }
-        println(result)
+        while (operatorStack.isNotEmpty()) postfix.add(operatorStack.removeLast())
+
+        if (numbers.size == 0 || numbers.size == operators.size
+            || (numbers.size > 1 && operators.size == 0)
+        ) { println("Invalid expression"); continue }
+
+        var answer = 0
+        val answerStack = mutableListOf<Int>()
+//        println(postfix)
+        while (postfix.isNotEmpty()) {
+            when {
+                postfix.first().contains(isDigit) -> answerStack.add(postfix.removeFirst().toInt())
+                postfix.first().contains(isLetter) -> answerStack.add(store[postfix.removeFirst()]!!)
+                postfix.first().contains(isOperator) -> {
+                    val one = answerStack.removeLast()
+                    val two = answerStack.removeLast()
+                    when (postfix.first()) {
+                        "*" -> answer = two * one
+                        "/" -> answer = two / one
+                        "+" -> answer = two + one
+                        "-" -> answer = two - one
+                    }
+                    postfix.removeFirst()
+                    answerStack.add(answer)
+                }
+            }
+        }
+        println(answer)
     }
     println("Bye!")
 }

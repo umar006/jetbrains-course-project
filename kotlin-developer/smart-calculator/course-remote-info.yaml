@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://stepik.org/media/attachments/lesson/271268/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: Wed, 05 May 2021 04:52:45 UTC
+update_date: Fri, 07 May 2021 13:40:08 UTC
 stages:
 - id: 486
   step: 7809
@@ -129,8 +129,6 @@ topics:
     theory_id: 5819
   - title: EduTools
     theory_id: 5839
-  - title: When expression
-    theory_id: 4631
   4:
   - title: Errors in programs
     theory_id: 11559
