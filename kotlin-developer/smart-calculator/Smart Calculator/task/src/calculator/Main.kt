@@ -63,6 +63,7 @@ fun main() {
         val answer = try {
             postfixToAnswer(postfix, store)
         } catch (e: NumberFormatException) {
+            // use BigInteger if throw the error
             postfixToAnswerBI(postfix, store)
         }
         println(answer)
@@ -75,8 +76,11 @@ fun isVariable(value: String, store: MutableMap<String, String>): Boolean {
         val formattedValue = value.replace("\\s+".toRegex(), "")
         val variable = formattedValue.split("=")
 
-        val invalAssign = "(?<==)([a-zA-Z]+\\d|\\d+[a-zA-Z])|=[a-zA-Z]\\d=|=\\d[a-zA-Z]=".toRegex()
+        // Regex contains alphanumeric and have more than 2 "="
+        val invalAssign = "(?<==)([a-zA-Z]+\\d|\\d+[a-zA-Z])".toRegex()
+        // Regex contains start with alphanumeric or have more than 2 "=" with ASCII
         val invalIdent = "^[a-zA-Z]+\\d|^\\d+|=[\\x00-\\x7F]*=".toRegex()
+        // Regex contains variable but output is null
         val unknownVar = "(?<==)[a-zA-Z]+".toRegex()
 
         when {
@@ -125,23 +129,29 @@ fun infixToPostfix(infix: List<String>): MutableList<String> {
     val operatorStack = mutableListOf<String>()
     for (finput in infix) {
 
+        // Add operands (numbers and variables) to the result (postfix notation) as they arrive.
         if (finput.contains(isDigit) || finput.contains(isLetter)) {
             postfix.add(finput)
             continue
         }
 
+        // If the stack is empty or contains a left parenthesis on top, push the incoming operator on the stack.
         if ((operatorStack.isEmpty() || operatorStack.last() == "(")
             && finput.contains(isOperator)) {
             operatorStack.add(finput)
             continue
         }
 
+        // If the incoming operator has higher precedence than the top of the stack, push it on the stack.
         if (operatorStack.isNotEmpty() && operatorStack.last().contains(lowPrecedence)
             && finput.contains(highPrecedence)) {
             operatorStack.add(finput)
             continue
         }
 
+        // If the incoming operator has lower or equal precedence than or to the top of the stack,
+        // pop the stack and add operators to the result until you see an operator that has a smaller precedence
+        // or a left parenthesis on the top of the stack; then add the incoming operator to the stack.
         if (operatorStack.isNotEmpty()
             && ((operatorStack.last().contains(lowPrecedence) && finput.contains(lowPrecedence))
                     || (operatorStack.last().contains(highPrecedence) && finput.contains(highPrecedence))
@@ -150,17 +160,21 @@ fun infixToPostfix(infix: List<String>): MutableList<String> {
             postfix.add(operatorStack.removeLast())
             while (operatorStack.isNotEmpty() && (operatorStack.last() != "("
                         || (operatorStack.last().contains(highPrecedence) && finput.contains(highPrecedence))
-                        || (operatorStack.last().contains(lowPrecedence) && finput.contains(lowPrecedence)))
+                        || (operatorStack.last().contains(lowPrecedence) && finput.contains(lowPrecedence))
+                        || (operatorStack.last().contains(highPrecedence) && finput.contains(lowPrecedence)))
             ) postfix.add(operatorStack.removeLast())
             operatorStack.add(finput)
             continue
         }
 
+        // If the incoming element is a left parenthesis, push it on the stack.
         if (finput == "(") {
             operatorStack.add(finput)
             continue
         }
 
+        // If the incoming element is a right parenthesis, pop the stack and add operators to the result
+        // until you see a left parenthesis. Discard the pair of parentheses.
         if (finput == ")") {
             if (!operatorStack.contains("(")) { println("Invalid expression"); break }
             while (operatorStack.last() != "(") {
@@ -170,11 +184,17 @@ fun infixToPostfix(infix: List<String>): MutableList<String> {
             continue
         }
     }
+    // At the end of the expression, pop the stack and add all operators to the result.
     while (operatorStack.isNotEmpty()) postfix.add(operatorStack.removeLast())
 
     return postfix
 }
 
+/**
+ * Convert postfix to answer
+ * @param postfix
+ * @param store
+ */
 fun postfixToAnswer(postfix: MutableList<String>, store: MutableMap<String, String>): Int {
     val isDigit = "[\\d]".toRegex()
     val isLetter = "[a-zA-Z]".toRegex()
@@ -184,14 +204,18 @@ fun postfixToAnswer(postfix: MutableList<String>, store: MutableMap<String, Stri
     val answerStack = mutableListOf<Int>()
     while (postfix.isNotEmpty()) {
         when {
+            // If the incoming element is a number, push it into the stack (the whole number, not a single digit!).
             postfix.first().contains(isDigit) -> {
                 postfix[0].toInt()
                 answerStack.add(postfix.removeFirst().toInt())
             }
+            // If the incoming element is the name of a variable, push its value into the stack.
             postfix.first().contains(isLetter) -> {
                 store[postfix[0]]!!.toInt()
                 answerStack.add(store[postfix.removeFirst()]!!.toInt())
             }
+            // If the incoming element is an operator, then pop twice to get two numbers and perform the operation;
+            // push the result on the stack.
             postfix.first().contains(isOperator) -> {
                 val one = answerStack.removeLast()
                 val two = answerStack.removeLast()
@@ -201,6 +225,7 @@ fun postfixToAnswer(postfix: MutableList<String>, store: MutableMap<String, Stri
                     "+" -> answer = two + one
                     "-" -> answer = two - one
                 }
+                // When the expression ends, the number on the top of the stack is a final result.
                 postfix.removeFirst()
                 answerStack.add(answer)
             }
@@ -209,6 +234,11 @@ fun postfixToAnswer(postfix: MutableList<String>, store: MutableMap<String, Stri
     return answer
 }
 
+/**
+ * Convert postfix to answer but with BigInteger
+ * @param postfix
+ * @param store
+ */
 fun postfixToAnswerBI(postfix: MutableList<String>, store: MutableMap<String, String>): BigInteger {
     val isDigit = "[\\d]".toRegex()
     val isLetter = "[a-zA-Z]".toRegex()
